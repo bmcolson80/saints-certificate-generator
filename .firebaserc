@@ -1,0 +1,5 @@
+{
+  "projects": {
+    "default": "sebc-certificate-generator"
+  }
+}

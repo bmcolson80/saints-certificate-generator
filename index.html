@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAINTS Basketball Certificate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Links for the PWA -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .certificate-container {
+            background-color: white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            background-image: none; /* Removed gradient */
+            background-color: white;
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        .logo-img {
+            max-width: 250px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 9999px; /* This works now that width and height are the same */
+        }
+        .certificate-title {
+            color: #cc0000; /* Red from logo */
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .award-text {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        .player-name {
+            color: #000080; /* Darker blue */
+            font-size: 3.5rem; /* Increased size */
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+        .award-details {
+            color: #555;
+            font-size: 1.5rem;
+            margin-top: 15px;
+        }
+        .coach-name {
+            font-weight: 600;
+        }
+        .date-text {
+            font-style: italic;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #777;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+            align-items: flex-start;
+        }
+        .input-item {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .input-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input[type="text"] {
+            padding: 12px 15px;
+            border: 2px solid #a0aec0; /* Tailwind gray-400 */
+            border-radius: 8px;
+            font-size: 1.1rem;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4299e1; /* Tailwind blue-500 */
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        .generate-button {
+            background-color: #cc0000; /* Red from logo */
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        .generate-button:hover {
+            background-color: #a00000; /* Darker red */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(204, 0, 0, 0.4);
+        }
+        .generate-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(204, 0, 0, 0.3);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .print-button, .save-button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .print-button {
+            background-color: #000080;
+            color: white;
+            border-color: #000080;
+        }
+        .save-button {
+            background-color: #e0e7ff;
+            color: #000080;
+            border-color: #000080;
+        }
+        .print-button:hover, .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .certificate-title {
+                font-size: 2.5rem;
+            }
+            .award-text {
+                font-size: 1.4rem;
+            }
+            .player-name {
+                font-size: 2.2rem;
+            }
+            .award-details {
+                font-size: 1.2rem;
+            }
+            .date-text {
+                font-size: 1rem;
+            }
+            .certificate-container {
+                padding: 25px;
+            }
+            .input-group {
+                align-items: center;
+                max-width: 100%;
+            }
+            .logo-img {
+                max-width: 180px;
+            }
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .certificate-title {
+                font-size: 2rem;
+            }
+            .award-text {
+                font-size: 1.2rem;
+            }
+            .player-name {
+                font-size: 1.8rem;
+            }
+            .award-details {
+                font-size: 1rem;
+            }
+            .date-text {
+                font-size: 0.9rem;
+            }
+            .certificate-container {
+                padding: 15px;
+            }
+            input[type="text"] {
+                font-size: 1rem;
+                padding: 10px;
+            }
+            .generate-button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Specific styling for the award name */
+        #outputAwardName {
+            font-size: 2.25rem; /* Make it larger */
+            font-weight: 700; /* Make it bold */
+            color: #000080; /* Match the player name for cohesion */
+            margin-bottom: 25px;
+            line-height: 1.1;
+        }
+
+        /* Print styles */
+        @media print {
+            body > *:not(.certificate-container) {
+                display: none !important;
+            }
+            .certificate-container {
+                display: block !important;
+                margin: 0;
+                border: none;
+                box-shadow: none;
+                min-height: 100vh;
+                width: 100vw;
+                padding: 0;
+                border-radius: 0;
+            }
+            .certificate-container .content-wrapper {
+                padding: 20px;
+                min-height: 100vh;
+            }
+        }
+        .logo-selector-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+        .logo-selector-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .logo-selector-item input[type="radio"] {
+            margin: 0;
+        }
+        .logo-selector-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            border-radius: 9999px; /* Make logos round */
+            transition: border-color 0.2s ease;
+        }
+        .logo-selector-item input[type="radio"]:checked + img {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            margin-top: 4rem;
+        }
+        .signature-block {
+            text-align: left;
+        }
+        .season-block {
+            text-align: right;
+        }
+        .signature-block .coach-name {
+            display: block;
+            margin-top: 5px;
+        }
+        .signature-text {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .coach-title {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #777;
+            margin-top: 2px;
+        }
+        .season-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #000080;
+            animation: spin 1s ease infinite;
+            display: none; /* Hidden by default */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .button-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center p-4">
+
+    <!-- Input Fields Section -->
+    <div id="inputForm" class="input-group bg-white p-6 rounded-xl shadow-lg mb-8 w-full max-w-2xl">
+        <h2 class="text-2xl font-bold text-center text-blue-800 mb-6 w-full">SEBC Certificate Generator</h2>
+
+        <div class="input-item">
+            <label for="playerNameInput" class="input-label">Player Name:</label>
+            <input type="text" id="playerNameInput" placeholder="Enter player's full name" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="input-item">
+            <label for="awardNameInput" class="input-label">Award Name:</label>
+            <input type="text" id="awardNameInput" placeholder="e.g., Most Valuable Player" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="input-item">
+            <label for="coachNameInput" class="input-label">Coach Name:</label>
+            <input type="text" id="coachNameInput" placeholder="Enter coach's full name" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <!-- Updated input field for season -->
+        <div class="input-item">
+            <label for="dateInput" class="input-label">Season:</label>
+            <input type="text" id="dateInput" placeholder="e.g., Winter 2025" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="input-item text-center">
+            <label class="input-label text-center w-full">Choose a Logo:</label>
+            <div class="logo-selector-group">
+                <label class="logo-selector-item">
+                    <input type="radio" name="logo" value="Blue_SAINTS.png" checked>
+                    <img src="Blue_SAINTS.png" alt="Blue Logo">
+                    <span>Blue</span>
+                </label>
+                <label class="logo-selector-item">
+                    <input type="radio" name="logo" value="White_SAINTS.png">
+                    <img src="White_SAINTS.png" alt="White Logo">
+                    <span>White</span>
+                </label>
+                <label class="logo-selector-item">
+                    <input type="radio" name="logo" value="Red_SAINTS.png">
+                    <img src="Red_SAINTS.png" alt="Red Logo">
+                    <span>Red</span>
+                </label>
+            </div>
+        </div>
+
+        <button id="generateCertificateBtn" class="generate-button w-full">Generate Certificate</button>
+    </div>
+
+    <!-- Certificate Display Section -->
+    <div id="certificateDisplay" class="certificate-container hidden">
+        <div class="content-wrapper">
+            <img id="logoImage" src="Blue_SAINTS.png" alt="SAINTS Logo" class="logo-img">
+            <h1 class="certificate-title">Certificate of Recognition</h1>
+            <p class="award-text">This certificate is proudly presented to</p>
+            <p id="outputPlayerName" class="player-name">PLAYER NAME</p>
+            <p class="award-text">for outstanding achievement as a SAINTS basketball player.</p>
+            <p class="award-text font-bold text-black mt-8">Awarded for</p>
+            <p id="outputAwardName" class="font-bold text-blue-800 text-3xl mt-2 mb-8">AWARD NAME</p>
+            
+            <div class="signature-section">
+                <div class="signature-block">
+                    <p class="signature-text">Signed,</p>
+                    <p id="outputCoachName" class="coach-name text-2xl font-bold text-blue-800">COACH NAME</p>
+                    <p class="coach-title">Head Coach</p>
+                </div>
+                <div class="season-block">
+                    <p class="signature-text">Season:</p>
+                    <p id="outputDate" class="season-text text-2xl font-bold text-blue-800"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Action buttons for the certificate -->
+    <div class="action-buttons hidden">
+        <button id="savePdfBtn" class="print-button">
+            <span class="button-content">Save as PDF<div id="saveSpinner" class="loading-spinner"></div></span>
+        </button>
+        <button id="printBtn" class="save-button">
+            <span class="button-content">Print<div id="printSpinner" class="loading-spinner"></div></span>
+        </button>
+        <button id="startOverBtn" class="save-button">Start Over</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register service worker for PWA functionality
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(registration => {
+                            console.log('Service Worker registered with scope:', registration.scope);
+                        })
+                        .catch(err => {
+                            console.log('Service Worker registration failed:', err);
+                        });
+                });
+            }
+
+            // Get references to all input fields and buttons
+            const playerNameInput = document.getElementById('playerNameInput');
+            const awardNameInput = document.getElementById('awardNameInput');
+            const coachNameInput = document.getElementById('coachNameInput');
+            const dateInput = document.getElementById('dateInput');
+            const generateCertificateBtn = document.getElementById('generateCertificateBtn');
+            const savePdfBtn = document.getElementById('savePdfBtn');
+            const printBtn = document.getElementById('printBtn');
+            const startOverBtn = document.getElementById('startOverBtn');
+            const saveSpinner = document.getElementById('saveSpinner');
+            const printSpinner = document.getElementById('printSpinner');
+
+
+            // Get references to output elements in the certificate
+            const inputForm = document.getElementById('inputForm');
+            const certificateDisplay = document.getElementById('certificateDisplay');
+            const actionButtonsContainer = document.querySelector('.action-buttons');
+            const outputPlayerName = document.getElementById('outputPlayerName');
+            const outputAwardName = document.getElementById('outputAwardName');
+            const outputCoachName = document.getElementById('outputCoachName');
+            const outputDate = document.getElementById('outputDate');
+            const logoImage = document.getElementById('logoImage');
+            const logoRadios = document.querySelectorAll('input[name="logo"]');
+            
+            // Function to generate and display the certificate
+            const generateCertificate = () => {
+                if (!playerNameInput.value || !awardNameInput.value || !coachNameInput.value || !dateInput.value) {
+                    let errorMessage = document.getElementById('errorMessage');
+                    if (!errorMessage) {
+                        errorMessage = document.createElement('div');
+                        errorMessage.id = 'errorMessage';
+                        errorMessage.className = "mt-4 p-4 bg-red-100 text-red-700 rounded-lg text-sm";
+                        inputForm.insertBefore(errorMessage, generateCertificateBtn);
+                    }
+                    errorMessage.textContent = 'Please fill out all fields to generate the certificate.';
+                    return;
+                } else {
+                    let errorMessage = document.getElementById('errorMessage');
+                    if(errorMessage) {
+                        errorMessage.remove();
+                    }
+                }
+
+                // Update the certificate content with input values
+                const playerName = playerNameInput.value.trim().toUpperCase() || 'PLAYER NAME';
+                const awardName = awardNameInput.value.trim().toUpperCase() || 'AWARD NAME';
+                const coachName = coachNameInput.value.trim() || 'COACH NAME';
+                const date = dateInput.value.trim() || '';
+                const selectedLogoValue = document.querySelector('input[name="logo"]:checked').value;
+                
+                outputPlayerName.textContent = playerName;
+                outputAwardName.textContent = awardName;
+                outputCoachName.textContent = coachName;
+                outputDate.textContent = date;
+                logoImage.src = selectedLogoValue;
+
+                // Hide the input form and show the certificate
+                inputForm.classList.add('hidden');
+                certificateDisplay.classList.remove('hidden');
+                actionButtonsContainer.classList.remove('hidden');
+            };
+
+            // Event listener for the generate button
+            generateCertificateBtn.addEventListener('click', generateCertificate);
+
+            // Event listener for logo selection
+            logoRadios.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    logoImage.src = event.target.value;
+                });
+            });
+
+            // Function to handle PDF creation from the visible certificate
+            const createPdfFromCertificate = async (save = true) => {
+                const button = save ? savePdfBtn : printBtn;
+                const spinner = save ? saveSpinner : printSpinner;
+                
+                button.disabled = true;
+                spinner.style.display = 'block';
+
+                const { jsPDF } = window.jspdf;
+                const certificateElement = certificateDisplay;
+
+                try {
+                    const canvas = await html2canvas(certificateElement, { 
+                        scale: 4, // Higher scale for better quality
+                        useCORS: true,
+                        scrollY: -window.scrollY // Fixes an issue with page scrolling
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    const pdf = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+                    const imgAspectRatio = imgWidth / imgHeight;
+
+                    // Calculate dimensions to fit the image on the A4 page while maintaining aspect ratio
+                    const scaleFactor = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95; // A small margin
+                    const newWidth = imgWidth * scaleFactor;
+                    const newHeight = imgHeight * scaleFactor;
+
+                    // Calculate the position to center the image
+                    const x = (pdfWidth - newWidth) / 2;
+                    const y = (pdfHeight - newHeight) / 2;
+
+                    pdf.addImage(imgData, 'PNG', x, y, newWidth, newHeight);
+
+                    // Draw the double red border on the PDF
+                    // Outer border
+                    pdf.setDrawColor(204, 0, 0); // Red
+                    pdf.setLineWidth(4); // Line thickness
+                    pdf.rect(0, 0, pdfWidth, pdfHeight, 'S');
+
+                    // Inner border
+                    pdf.setLineWidth(2);
+                    pdf.rect(5, 5, pdfWidth - 10, pdfHeight - 10, 'S');
+
+
+                    if (save) {
+                        const playerName = playerNameInput.value.trim().replace(/\s+/g, '_') || 'Player_Name';
+                        const season = dateInput.value.trim().replace(/\s+/g, '_') || 'Unknown_Season';
+                        const filename = `${playerName}_${season}_Certificate.pdf`;
+                        pdf.save(filename);
+                    } else {
+                        // Use a Blob to trigger the print dialog
+                        const blob = pdf.output('blob');
+                        const url = URL.createObjectURL(blob);
+                        
+                        const newWindow = window.open(url);
+                        newWindow.onload = () => {
+                            newWindow.print();
+                            setTimeout(() => {
+                                URL.revokeObjectURL(url);
+                            }, 100);
+                        };
+                    }
+                } catch (error) {
+                    console.error("Error generating PDF:", error);
+                } finally {
+                    button.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            };
+            
+            // Event listener for the "Save as PDF" button
+            savePdfBtn.addEventListener('click', () => createPdfFromCertificate(true));
+
+            // Event listener for the print button
+            printBtn.addEventListener('click', () => createPdfFromCertificate(false));
+
+            // Event listener for the "Start Over" button
+            startOverBtn.addEventListener('click', () => {
+                // Show the input form and hide the certificate
+                inputForm.classList.remove('hidden');
+                certificateDisplay.classList.add('hidden');
+                actionButtonsContainer.classList.add('hidden');
+                // Clear input fields and reset logo
+                playerNameInput.value = '';
+                awardNameInput.value = '';
+                coachNameInput.value = '';
+                dateInput.value = '';
+                document.querySelector('input[name="logo"][value="Blue_SAINTS.png"]').checked = true;
+                logoImage.src = 'Blue_SAINTS.png';
+            });
+        });
+    </script>
+</body>
+</html>
