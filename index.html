@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAINTS Basketball Certificate</title>
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Links for the PWA -->
-    <link rel="manifest" href="manifest.json">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -349,7 +353,6 @@
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center p-4">
 
-    <!-- Input Fields Section -->
     <div id="inputForm" class="input-group bg-white p-6 rounded-xl shadow-lg mb-8 w-full max-w-2xl">
         <h2 class="text-2xl font-bold text-center text-blue-800 mb-6 w-full">SEBC Certificate Generator</h2>
 
@@ -368,7 +371,6 @@
             <input type="text" id="coachNameInput" placeholder="Enter coach's full name" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
         
-        <!-- Updated input field for season -->
         <div class="input-item">
             <label for="dateInput" class="input-label">Season:</label>
             <input type="text" id="dateInput" placeholder="e.g., Winter 2025" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
@@ -386,7 +388,7 @@
                     <input type="radio" name="logo" value="White_SAINTS.png">
                     <img src="White_SAINTS.png" alt="White Logo">
                     <span>White</span>
-                </label>
+                    </label>
                 <label class="logo-selector-item">
                     <input type="radio" name="logo" value="Red_SAINTS.png">
                     <img src="Red_SAINTS.png" alt="Red Logo">
@@ -398,7 +400,6 @@
         <button id="generateCertificateBtn" class="generate-button w-full">Generate Certificate</button>
     </div>
 
-    <!-- Certificate Display Section -->
     <div id="certificateDisplay" class="certificate-container hidden">
         <div class="content-wrapper">
             <img id="logoImage" src="Blue_SAINTS.png" alt="SAINTS Logo" class="logo-img">
@@ -423,7 +424,6 @@
         </div>
     </div>
     
-    <!-- Action buttons for the certificate -->
     <div class="action-buttons hidden">
         <button id="savePdfBtn" class="print-button">
             <span class="button-content">Save as PDF<div id="saveSpinner" class="loading-spinner"></div></span>
@@ -439,6 +439,7 @@
             // Register service worker for PWA functionality
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
+                    // Note: The service worker register is left as /service-worker.js as it is generally correct
                     navigator.serviceWorker.register('/service-worker.js')
                         .then(registration => {
                             console.log('Service Worker registered with scope:', registration.scope);
