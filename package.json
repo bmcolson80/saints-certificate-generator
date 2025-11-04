@@ -1,0 +1,26 @@
+{
+  "name": "sebc-pwa-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "service-worker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bmcolson80/saints-certificate-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bmcolson80/saints-certificate-generator/issues"
+  },
+  "homepage": "https://github.com/bmcolson80/saints-certificate-generator#readme",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.16"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
