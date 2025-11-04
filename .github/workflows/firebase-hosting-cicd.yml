@@ -1,35 +1,26 @@
-# Name of the workflow
 name: Deploy to Firebase Hosting
 
-# Trigger: Run this workflow when code is pushed to the main branch
 on:
   push:
     branches:
       - main
 
-# Define the job
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
-    # Defines the steps the job will execute.
     steps:
-      # Step 1: Checkout the repository code.
       - name: Checkout code
         uses: actions/checkout@v4
       
-      # Step 2: Set up Node.js.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
       
-      # Step 3: Install Firebase CLI and project dependencies.
       - name: Install dependencies
         run: npm install -g firebase-tools
       
-      # Step 4: Deploy to Firebase Hosting.
-      # This step uses the Firebase token from the repository secrets for authentication.
       - name: Deploy to Firebase
         run: firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
         env:
