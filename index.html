@@ -267,6 +267,31 @@
                 min-height: 100vh;
             }
         }
+        
+        /* === NEW: Force Desktop Layout for PDF Capture === */
+        /* Target the certificate container when the pdf-capture-fix class is present */
+        .pdf-capture-fix.certificate-container {
+            /* Override mobile widths and padding to force desktop size */
+            padding: 40px !important; 
+            max-width: 900px !important; 
+            width: 900px !important; 
+        }
+
+        /* Target the core text elements to ensure desktop font sizes are used */
+        .pdf-capture-fix .certificate-title {
+            font-size: 3.5rem !important;
+        }
+
+        .pdf-capture-fix .award-text {
+            font-size: 1.8rem !important;
+        }
+
+        .pdf-capture-fix .player-name {
+            font-size: 3.5rem !important;
+        }
+        /* ================================================= */
+
+
         .logo-selector-group {
             display: flex;
             align-items: center;
@@ -537,13 +562,16 @@
                 const { jsPDF } = window.jspdf;
                 const certificateElement = certificateDisplay;
                 
-                // --- ADDED: Store original styles and enforce large, consistent size for capture ---
+                // --- NEW FIX: Add the non-responsive class for consistent capture ---
+                certificateElement.classList.add('pdf-capture-fix');
+
+                // Store original styles and enforce large, consistent size for capture 
                 const originalWidth = certificateElement.style.width;
                 const originalMaxWidth = certificateElement.style.maxWidth;
                 
                 certificateElement.style.width = '1200px'; 
                 certificateElement.style.maxWidth = '1200px'; 
-                // -----------------------------------------------------------------------------------
+                // --------------------------------------------------------------------
 
                 try {
                     const canvas = await html2canvas(certificateElement, { 
@@ -607,10 +635,13 @@
                 } catch (error) {
                     console.error("Error generating PDF:", error);
                 } finally {
-                    // --- ADDED: Restore original sizing ---
+                    // --- NEW FIX: Restore by removing the class ---
+                    certificateElement.classList.remove('pdf-capture-fix');
+                    
+                    // Restore original sizing
                     certificateElement.style.width = originalWidth;
                     certificateElement.style.maxWidth = originalMaxWidth;
-                    // -------------------------------------
+                    // ---------------------------------------------
                     
                     button.disabled = false;
                     spinner.style.display = 'none';
