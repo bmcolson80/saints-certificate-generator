@@ -1,15 +1,12 @@
-const CACHE_NAME = 'sebc-certificate-generator-v1';
+const CACHE_NAME = 'sebc-certificate-generator-v2'; // Changed version number
 const urlsToCache = [
   '/index.html',
   '/',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
   '/manifest.json',
   '/Blue_SAINTS.png',
   '/White_SAINTS.png',
   '/Red_SAINTS.png'
+  // Removed external CDN URLs - they can't be cached due to CORS
 ];
 
 self.addEventListener('install', event => {
@@ -31,5 +28,20 @@ self.addEventListener('fetch', event => {
         }
         return fetch(event.request);
       })
+  );
+});
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
   );
 });
