@@ -562,7 +562,7 @@
                 const { jsPDF } = window.jspdf;
                 const certificateElement = certificateDisplay;
                 
-                // --- NEW FIX: Add the non-responsive class for consistent capture ---
+                // --- FIX for mobile scaling: Add the non-responsive class for consistent capture ---
                 certificateElement.classList.add('pdf-capture-fix');
 
                 // Store original styles and enforce large, consistent size for capture 
@@ -571,16 +571,18 @@
                 
                 certificateElement.style.width = '1200px'; 
                 certificateElement.style.maxWidth = '1200px'; 
-                // --------------------------------------------------------------------
+                // ------------------------------------------------------------------------------------
 
                 try {
                     const canvas = await html2canvas(certificateElement, { 
-                        scale: 4, // Higher scale for better quality
+                        // OPTIMIZATION 1: Reduced scale from 4 to 2 for 4x size reduction
+                        scale: 2, 
                         useCORS: true,
                         scrollY: -window.scrollY // Fixes an issue with page scrolling
                     });
                     
-                    const imgData = canvas.toDataURL('image/png');
+                    // OPTIMIZATION 2 & 3: Switched to JPEG format with 90% quality for compression
+                    const imgData = canvas.toDataURL('image/jpeg', 0.9); 
                     
                     const pdf = new jsPDF({
                         orientation: 'landscape',
@@ -603,7 +605,8 @@
                     const x = (pdfWidth - newWidth) / 2;
                     const y = (pdfHeight - newHeight) / 2;
 
-                    pdf.addImage(imgData, 'PNG', x, y, newWidth, newHeight);
+                    // OPTIMIZATION 4: Use 'JPEG' as the format in addImage
+                    pdf.addImage(imgData, 'JPEG', x, y, newWidth, newHeight); 
 
                     // Draw the double red border on the PDF
                     pdf.setDrawColor(204, 0, 0); // Red
@@ -635,13 +638,10 @@
                 } catch (error) {
                     console.error("Error generating PDF:", error);
                 } finally {
-                    // --- NEW FIX: Restore by removing the class ---
+                    // Restore original sizing and classes
                     certificateElement.classList.remove('pdf-capture-fix');
-                    
-                    // Restore original sizing
                     certificateElement.style.width = originalWidth;
                     certificateElement.style.maxWidth = originalMaxWidth;
-                    // ---------------------------------------------
                     
                     button.disabled = false;
                     spinner.style.display = 'none';
