@@ -24,7 +24,7 @@
         }
         .certificate-container {
             background-color: white;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 0 4px #cc0000, 0 0 0 8px white, 0 0 0 10px #cc0000;
             max-width: 900px;
             width: 100%;
             padding: 40px;
@@ -32,7 +32,7 @@
             border-radius: 15px;
             position: relative;
             overflow: hidden;
-            background-image: none; /* Removed gradient */
+            background-image: none;
             background-color: white;
         }
         .content-wrapper {
@@ -549,14 +549,14 @@
 
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = pdf.internal.pageSize.getHeight();
-                    const imgWidth = canvas.width;
-                    const imgHeight = canvas.height;
-                    const imgAspectRatio = imgWidth / imgHeight;
+                    const imgDataWidth = canvas.width;
+                    const imgDataHeight = canvas.height;
+                    const imgAspectRatio = imgDataWidth / imgDataHeight;
 
                     // Calculate dimensions to fit the image on the A4 page while maintaining aspect ratio
-                    const scaleFactor = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.95; // A small margin
-                    const newWidth = imgWidth * scaleFactor;
-                    const newHeight = imgHeight * scaleFactor;
+                    const scaleFactor = Math.min(pdfWidth / imgDataWidth, pdfHeight / imgDataHeight) * 0.95; // A small margin
+                    const newWidth = imgDataWidth * scaleFactor;
+                    const newHeight = imgDataHeight * scaleFactor;
 
                     // Calculate the position to center the image
                     const x = (pdfWidth - newWidth) / 2;

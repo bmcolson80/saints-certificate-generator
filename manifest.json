@@ -1,21 +1,21 @@
 {
-"name": "SAINTS Certificate Generator",
-"short_name": "SAINTS Cert",
-"description": "Generate and save SAINTS Basketball certificates.",
-"start_url": "/index.html",
-"display": "standalone",
-"background_color": "#f0f4f8",
-"theme_color": "#000080",
-"icons": [
-{
-"src": "/SAINTS_Blue.png",
-"sizes": "192x192",
-"type": "image/png"
-},
-{
-"src": "/SAINTS_Blue.png",
-"sizes": "512x512",
-"type": "image/png"
-}
-]
+  "name": "SAINTS Certificate Generator",
+  "short_name": "SAINTS Cert",
+  "description": "Generate and save SAINTS Basketball certificates.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#000080",
+  "icons": [
+    {
+      "src": "/Blue_SAINTS.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/Blue_SAINTS.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
