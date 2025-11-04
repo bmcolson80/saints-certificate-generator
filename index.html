@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAINTS Basketball Certificate</title>
 
+    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -392,7 +398,7 @@
                     <input type="radio" name="logo" value="White_SAINTS.png">
                     <img src="White_SAINTS.png" alt="White Logo">
                     <span>White</span>
-                </label>
+                    </label>
                 <label class="logo-selector-item">
                     <input type="radio" name="logo" value="Red_SAINTS.png">
                     <img src="Red_SAINTS.png" alt="Red Logo">
@@ -443,6 +449,7 @@
             // Register service worker for PWA functionality
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
+                    // Note: The service worker register is left as /service-worker.js as it is generally correct
                     navigator.serviceWorker.register('/service-worker.js')
                         .then(registration => {
                             console.log('Service Worker registered with scope:', registration.scope);
