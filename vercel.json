@@ -17,7 +17,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(png|jpg|jpeg|gif|svg|ico|webp))",
+      "source": "/:path*.(png|jpg|jpeg|gif|svg|ico|webp)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(css|js))",
+      "source": "/:path*.(css|js)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "headers": [
         {
           "key": "X-Content-Type-Options",
