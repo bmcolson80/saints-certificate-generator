@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sebc-certificate-generator-v4';
+const CACHE_NAME = 'sebc-certificate-generator-v5'; // Changed from v4
 const urlsToCache = [
   '/',
   '/index.html',
@@ -32,14 +32,30 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
+        // Return cached response if found
         if (response) {
           return response;
         }
-        return fetch(event.request).catch(() => {
-          if (event.request.destination === 'document') {
-            return caches.match('/index.html');
-          }
-        });
+        
+        // Try to fetch from network
+        return fetch(event.request)
+          .then(fetchResponse => {
+            // Don't cache if not a valid response
+            if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+              return fetchResponse;
+            }
+            return fetchResponse;
+          })
+          .catch(() => {
+            // If offline and requesting a page, return index.html
+            if (event.request.mode === 'navigate' || 
+                event.request.destination === 'document' ||
+                event.request.method === 'GET' && event.request.headers.get('accept').includes('text/html')) {
+              return caches.match('/index.html');
+            }
+            // For other resources, just fail
+            return new Response('Offline', { status: 503 });
+          });
       })
   );
 });
