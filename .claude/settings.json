@@ -1,7 +1,7 @@
 {
-  "allowedTools": {
+  "permissions": {
     "allow": [
-      "Bash(gh *)"
+      "Bash(gh :*)"
     ]
   }
 }
