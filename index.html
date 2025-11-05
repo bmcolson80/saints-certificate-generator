@@ -380,29 +380,29 @@
 
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center p-4">
+<body style="background-color: #f0f4f8; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; min-height: 100vh;">
 
-    <div id="inputForm" class="input-group bg-white p-6 rounded-xl shadow-lg mb-8 w-full max-w-2xl">
-        <h2 class="text-2xl font-bold text-center text-blue-800 mb-6 w-full">SEBC Certificate Generator</h2>
+    <div id="inputForm" class="input-group" style="background-color: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; width: 100%; max-width: 42rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; text-align: center; color: #1e40af; margin-bottom: 1.5rem; width: 100%;">SEBC Certificate Generator</h2>
 
         <div class="input-item">
             <label for="playerNameInput" class="input-label">Player Name:</label>
-            <input type="text" id="playerNameInput" placeholder="Enter player's full name" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" id="playerNameInput" placeholder="Enter player's full name">
         </div>
 
         <div class="input-item">
             <label for="awardNameInput" class="input-label">Award Name:</label>
-            <input type="text" id="awardNameInput" placeholder="e.g., Most Valuable Player" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" id="awardNameInput" placeholder="e.g., Most Valuable Player">
         </div>
 
         <div class="input-item">
             <label for="coachNameInput" class="input-label">Coach Name:</label>
-            <input type="text" id="coachNameInput" placeholder="Enter coach's full name" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" id="coachNameInput" placeholder="Enter coach's full name">
         </div>
-        
+
         <div class="input-item">
             <label for="dateInput" class="input-label">Season:</label>
-            <input type="text" id="dateInput" placeholder="e.g., Winter 2025" class="rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" id="dateInput" placeholder="e.g., Winter 2025">
         </div>
 
         <div class="input-item text-center">
@@ -436,18 +436,18 @@
             <p class="award-text">This certificate is proudly presented to</p>
             <p id="outputPlayerName" class="player-name">PLAYER NAME</p>
             <p class="award-text">for outstanding achievement as a SAINTS basketball player.</p>
-            <p class="award-text font-bold text-black mt-8">Awarded for</p>
-            <p id="outputAwardName" class="font-bold text-blue-800 text-3xl mt-2 mb-8">AWARD NAME</p>
+            <p class="award-text" style="font-weight: 700; color: #000; margin-top: 2rem;">Awarded for</p>
+            <p id="outputAwardName" style="font-weight: 700; color: #1e40af; font-size: 1.875rem; margin-top: 0.5rem; margin-bottom: 2rem;">AWARD NAME</p>
             
             <div class="signature-section">
                 <div class="signature-block">
                     <p class="signature-text">Signed,</p>
-                    <p id="outputCoachName" class="coach-name text-2xl font-bold text-blue-800">COACH NAME</p>
+                    <p id="outputCoachName" class="coach-name" style="font-size: 1.5rem; font-weight: 700; color: #1e40af;">COACH NAME</p>
                     <p class="coach-title">Head Coach</p>
                 </div>
                 <div class="season-block">
                     <p class="signature-text">Season:</p>
-                    <p id="outputDate" class="season-text text-2xl font-bold text-blue-800"></p>
+                    <p id="outputDate" class="season-text" style="font-size: 1.5rem; font-weight: 700; color: #1e40af;"></p>
                 </div>
             </div>
         </div>
@@ -517,7 +517,7 @@
                     if (!errorMessage) {
                         errorMessage = document.createElement('div');
                         errorMessage.id = 'errorMessage';
-                        errorMessage.className = "mt-4 p-4 bg-red-100 text-red-700 rounded-lg text-sm";
+                        errorMessage.style.cssText = "margin-top: 1rem; padding: 1rem; background-color: #fee2e2; color: #991b1b; border-radius: 0.5rem; font-size: 0.875rem;";
                         inputForm.insertBefore(errorMessage, generateCertificateBtn);
                     }
                     errorMessage.textContent = 'Please fill out all fields to generate the certificate.';
@@ -601,7 +601,6 @@
                     const pdfHeight = pdf.internal.pageSize.getHeight();
                     const imgDataWidth = canvas.width;
                     const imgDataHeight = canvas.height;
-                    const imgAspectRatio = imgDataWidth / imgDataHeight;
 
                     // Calculate dimensions to fit the image on the A4 page while maintaining aspect ratio
                     const scaleFactor = Math.min(pdfWidth / imgDataWidth, pdfHeight / imgDataHeight) * 0.95; // A small margin
@@ -633,14 +632,21 @@
                         // Use a Blob to trigger the print dialog
                         const blob = pdf.output('blob');
                         const url = URL.createObjectURL(blob);
-                        
+
                         const newWindow = window.open(url);
-                        newWindow.onload = () => {
-                            newWindow.print();
-                            setTimeout(() => {
-                                URL.revokeObjectURL(url);
-                            }, 100);
-                        };
+                        if (newWindow) {
+                            newWindow.onload = () => {
+                                newWindow.print();
+                                setTimeout(() => {
+                                    URL.revokeObjectURL(url);
+                                }, 100);
+                            };
+                        } else {
+                            // Popup was blocked, fallback to regular print
+                            console.warn('Popup blocked. Please allow popups for printing.');
+                            alert('Please allow popups to print the certificate.');
+                            URL.revokeObjectURL(url);
+                        }
                     }
                 } catch (error) {
                     console.error("Error generating PDF:", error);

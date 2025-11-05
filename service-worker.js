@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sebc-certificate-generator-v5'; // Changed from v4
+const CACHE_NAME = 'sebc-certificate-generator-v6'; // Updated after bug fixes
 const urlsToCache = [
   '/',
   '/index.html',
@@ -48,9 +48,10 @@ self.addEventListener('fetch', event => {
           })
           .catch(() => {
             // If offline and requesting a page, return index.html
-            if (event.request.mode === 'navigate' || 
+            const acceptHeader = event.request.headers.get('accept');
+            if (event.request.mode === 'navigate' ||
                 event.request.destination === 'document' ||
-                event.request.method === 'GET' && event.request.headers.get('accept').includes('text/html')) {
+                (event.request.method === 'GET' && acceptHeader && acceptHeader.includes('text/html'))) {
               return caches.match('/index.html');
             }
             // For other resources, just fail
