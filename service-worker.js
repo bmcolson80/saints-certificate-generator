@@ -1,12 +1,16 @@
-const CACHE_NAME = 'sebc-certificate-generator-v2'; // Changed version number
+const CACHE_NAME = 'sebc-certificate-generator-v3'; // Increment version
 const urlsToCache = [
-  '/index.html',
   '/',
+  '/index.html',
+  '/output.css',  // Add your Tailwind CSS
   '/manifest.json',
   '/Blue_SAINTS.png',
   '/White_SAINTS.png',
-  '/Red_SAINTS.png'
-  // Removed external CDN URLs - they can't be cached due to CORS
+  '/Red_SAINTS.png',
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png',
+  '/apple-touch-icon.png',
+  '/favicon.ico'
 ];
 
 self.addEventListener('install', event => {
@@ -16,6 +20,7 @@ self.addEventListener('install', event => {
         console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
+      .then(() => self.skipWaiting()) // Activate immediately
   );
 });
 
@@ -26,7 +31,12 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-        return fetch(event.request);
+        return fetch(event.request).catch(() => {
+          // If both cache and network fail, return a fallback
+          if (event.request.destination === 'document') {
+            return caches.match('/index.html');
+          }
+        });
       })
   );
 });
@@ -43,5 +53,6 @@ self.addEventListener('activate', event => {
         })
       );
     })
+    .then(() => self.clients.claim()) // Take control immediately
   );
 });
