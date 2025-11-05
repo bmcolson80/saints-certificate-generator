@@ -465,6 +465,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Force reset to input form on every page load
+            const inputForm = document.getElementById('inputForm');
+            const certificateDisplay = document.getElementById('certificateDisplay');
+            const actionButtonsContainer = document.querySelector('.action-buttons');
+            
+            inputForm.classList.remove('hidden');
+            certificateDisplay.classList.add('hidden');
+            actionButtonsContainer.classList.add('hidden');
+    
+            // Rest of your existing code continues here...
             // Register service worker for PWA functionality
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
