@@ -1,0 +1,9 @@
+node_modules
+.git
+.github
+test.js
+test-simple.js
+TEST_REPORT.md
+*.log
+.env
+.env.local
