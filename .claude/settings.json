@@ -1,0 +1,7 @@
+{
+  "allowedTools": {
+    "allow": [
+      "Bash(gh *)"
+    ]
+  }
+}
