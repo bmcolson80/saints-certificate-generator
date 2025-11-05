@@ -1,8 +1,8 @@
-const CACHE_NAME = 'sebc-certificate-generator-v3'; // Increment version
+const CACHE_NAME = 'sebc-certificate-generator-v4';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/output.css',  // Add your Tailwind CSS
+  '/output.css',
   '/manifest.json',
   '/Blue_SAINTS.png',
   '/White_SAINTS.png',
@@ -10,7 +10,11 @@ const urlsToCache = [
   '/android-chrome-192x192.png',
   '/android-chrome-512x512.png',
   '/apple-touch-icon.png',
-  '/favicon.ico'
+  '/favicon.ico',
+  // Cache the external libraries
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap'
 ];
 
 self.addEventListener('install', event => {
@@ -18,9 +22,9 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache.map(url => new Request(url, { mode: 'no-cors' })));
       })
-      .then(() => self.skipWaiting()) // Activate immediately
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -32,7 +36,6 @@ self.addEventListener('fetch', event => {
           return response;
         }
         return fetch(event.request).catch(() => {
-          // If both cache and network fail, return a fallback
           if (event.request.destination === 'document') {
             return caches.match('/index.html');
           }
@@ -53,6 +56,6 @@ self.addEventListener('activate', event => {
         })
       );
     })
-    .then(() => self.clients.claim()) // Take control immediately
+    .then(() => self.clients.claim())
   );
 });
